@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Sistema de Requisições - Hotel (Local)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Sistema de Requisições Internas</h1>
+  </header>
+
+  <main class="container">
+    <section class="form-section">
+      <form id="form-solicitacao" aria-label="Formulário de solicitação">
+        <label for="categoria">Departamento:</label>
+        <select id="categoria" required>
+          <option value="">-- Escolha um departamento --</option>
+        </select>
+
+        <label for="opcao">Tipo de solicitação:</label>
+        <select id="opcao" required>
+          <option value="">-- Primeiro selecione um departamento --</option>
+        </select>
+
+        <label>Prioridade:</label>
+        <div class="grupo-de-prioridade" role="radiogroup" aria-label="Prioridade">
+          <button type="button" class="prioridade-option" data-value="baixa">Baixa</button>
+          <button type="button" class="prioridade-option" data-value="media">Média</button>
+          <button type="button" class="prioridade-option" data-value="alta">Alta</button>
+        </div>
+
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" rows="4" placeholder="Descreva detalhadamente sua solicitação..." required></textarea>
+
+        <div class="form-actions">
+          <button type="submit" id="btn-enviar">Enviar Solicitação</button>
+          <button type="button" id="btn-reset">Limpar</button>
+        </div>
+
+        <div id="mensagem" class="mensagem" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <section class="list-section">
+      <h2>Solicitações Registradas</h2>
+
+      <div class="filtros">
+        <select id="filtro-categoria">
+          <option value="">Todos os departamentos</option>
+        </select>
+
+        <select id="filtro-prioridade">
+          <option value="">Todas prioridades</option>
+          <option value="alta">Alta</option>
+          <option value="media">Média</option>
+          <option value="baixa">Baixa</option>
+        </select>
+
+        <select id="filtro-status">
+          <option value="">Todos status</option>
+          <option value="Aberta">Aberta</option>
+          <option value="Em andamento">Em andamento</option>
+          <option value="Concluída">Concluída</option>
+        </select>
+
+        <input id="search" type="search" placeholder="Pesquisar descrição ou tipo..." />
+
+        <select id="ordenar">
+          <option value="date_desc">Mais recentes</option>
+          <option value="date_asc">Mais antigas</option>
+          <option value="priority_desc">Prioridade (alta → baixa)</option>
+          <option value="priority_asc">Prioridade (baixa → alta)</option>
+        </select>
+        
+      </div>
+
+      <table class="tabela" aria-describedby="tabela-solicitacoes">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Data</th>
+            <th>Departamento</th>
+            <th>Tipo</th>
+            <th>Prioridade</th>
+            <th>Descrição</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-solicitacoes"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Modal simples -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button id="modal-close" class="modal-close" aria-label="Fechar">×</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+:root{
+  --max-width: 1100px;
+  --gap: 12px;
+  --verde:#2ecc71;
+  --amarelo:#f1c40f;
+  --vermelho:#e74c3c;
+  --bg:#f7f7fb;
+  --card:#ffffff;
+  --muted:#666;
+}
+
+*{box-sizing:border-box}
+body{
+  font-family: Inter, system-ui, Arial, sans-serif;
+  background: var(--bg);
+  margin:0;
+  color:#222;
+  padding:20px;
+}
+header{ text-align:center; margin-bottom:16px; }
+.container{
+  max-width:var(--max-width);
+  margin:0 auto;
+  display:grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap:20px;
+}
+
+.form-section, .list-section{
+  background:var(--card);
+  padding:16px;
+  border-radius:10px;
+  box-shadow:0 6px 18px rgba(10,10,20,0.05);
+}
+
+label{display:block; margin-top:8px; font-weight:600;}
+select, textarea, input[type="search"]{
+  width:100%;
+  padding:8px;
+  margin-top:6px;
+  border-radius:6px;
+  border:1px solid #ddd;
+  font-size:14px;
+}
+
+.grupo-de-prioridade{ margin-top:8px; display:flex; gap:8px; }
+.prioridade-option{
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  background:transparent;
+  cursor:pointer;
+}
+.prioridade-option.selected{ box-shadow:0 4px 10px rgba(0,0,0,0.06); transform:translateY(-1px); }
+
+/* Estilo base dos botões */
+.prioridade-option {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.1s;
+}
+
+/* Quando o botão for selecionado */
+.prioridade-option.selected[data-value="baixa"] {
+  background: var(--verde);
+  color: #fff;
+  border-color: var(--verde);
+}
+
+.prioridade-option.selected[data-value="media"] {
+  background: var(--amarelo);
+  color: #222;
+  border-color: var(--amarelo);
+}
+
+.prioridade-option.selected[data-value="alta"] {
+  background: var(--vermelho);
+  color: #fff;
+  border-color: var(--vermelho);
+}
+
+.badge{
+  display:inline-block;
+  padding:6px 8px;
+  border-radius:6px;
+  color:#fff;
+  font-weight:700;
+  font-size:13px;
+}
+.prioridade-alta{ background:var(--vermelho); }
+.prioridade-media{ background:var(--amarelo); color:#222; }
+.prioridade-baixa{ background:var(--verde); }
+
+.form-actions{ margin-top:12px; display:flex; gap:8px; }
+button{ cursor:pointer; }
+#btn-enviar{ background:#2d8cff; color:#fff; border:none; padding:10px 14px; border-radius:8px; }
+#btn-reset{ background:#eee; border:none; padding:10px 12px; border-radius:8px; }
+
+.filtros{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:12px;
+  align-items:center;
+}
+.tabela{ width:100%; border-collapse:collapse; }
+.tabela th, .tabela td{ padding:10px; border-bottom:1px solid #eee; text-align:left; vertical-align:top; font-size:14px; }
+.tabela tbody tr:hover{ background:#fafafa; }
+
+.mensagem{ margin-top:8px; color:var(--muted); min-height:20px; }
+
+.small-btn{ padding:6px 8px; border-radius:6px; border:1px solid #ffffff; background:white; }
+
+.actions .btn{ margin-right:6px; }
+
+.modal{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.4); z-index:50; }
+.modal.hidden{ display:none; }
+.modal-content{ background:white; padding:16px; border-radius:8px; max-width:600px; width:90%; position:relative; }
+.modal-close{ position:absolute; right:10px; top:6px; border:none; background:transparent; font-size:20px; line-height:1; cursor:pointer; }
+
+/* Aumenta o campo de status na tabela */
+.status-select {
+  min-width: 130px;         /* aumenta a largura mínima */
+  padding: 6px 8px;         /* deixa mais espaço interno */
+  font-size: 14px;          /* aumenta o texto */
+  border-radius: 6px;       /* bordas arredondadas */
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+/* Opcional: muda a cor conforme o status */
+/* Classes simplificadas para as cores */
+.status-aberta {
+    background-color: #eb706c !important; /* Vermelho que você escolheu */
+    color: white;
+}
+
+.status-andamento {
+    background-color: #efdf82 !important; /* Amarelo */
+    color: #333;
+}
+
+.status-concluida {
+    background-color: #94fc94 !important; /* Verde */
+    color: #195c19;
+}
+
+
+/* Nova classe geral para todos os botões do sistema */
+/* Ajuste na div que criamos agora */
+
+.btn-custom {
+    padding: 0 16px;            /* Ajustei para 0 no topo/baixo para controlar pela altura fixa */
+    border-radius: 6px;
+    border: 1px solid #ccc;     /* Adicionei um contorno leve para padronizar */
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;       /* Mantenha apenas este */
+    align-items: center;        /* Alinha o texto no centro vertical */
+    justify-content: center;    /* Alinha o texto no centro horizontal */
+    font-size: 14px;
+    height: 35px;               /* Altura fixa para todos os botões serem iguais */
+    box-sizing: border-box;     /* Garante que a borda não aumente o tamanho do botão */
+}
+
+/* Cor azul para o botão principal (Enviar) */
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Cor cinza para botões secundários (Limpar, Exportar) */
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc; /* Um contorno leve para dar profundidade */
+}
+
+/* Efeito de hover (quando passa o mouse) */
+.btn-custom:hover {
+    opacity: 0.8;
+    transform: translateY(-1px); /* Leve subida para parecer clicável */
+}
+
+/* Ajuste da coluna de descrição */
+.col-descricao {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Estilização dos botões da tabela */
+.btn-ver {
+    background-color: #3498db !important;
+    color: white !important;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.btn-excluir {
+    background-color: #e74c3c !important;
+    color: white !important;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-ver:hover, .btn-excluir:hover {
+    filter: brightness(0.9);
+}
+
+/* 1. Telas médias (Até 900px) - Ex: Tablets deitados */
+@media (max-width: 900px) {
+    .container { 
+        grid-template-columns: 1fr; 
+    }
+}
+
+/* 2. Telas pequenas (Até 768px) - Ex: Celulares */
+@media (max-width: 768px) {
+
+    /* O container continua com 1fr (herdado do de cima) */
+    .table-container, table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    input, select, textarea, button, .btn-ver, .btn-excluir, .status-select {
+        font-size: 16px !important;
+        padding: 12px !important;
+        margin-bottom: 10px;
+    }
+
+    .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    /* === ADICIONE ESTES 3 BLOCOS NOVOS DAQUI PARA BAIXO === */
+
+    /* 1. Corrige os botões "Enviar" e "Limpar" do formulário para não esmagarem */
+    form div, .form-buttons {
+        display: flex;
+        flex-direction: column; /* Empilha um botão em cima do outro no celular */
+        width: 100%;
+    }
+    
+    form button, .form-buttons button {
+        width: 100% !important; /* Faz o botão ocupar a largura total do celular */
+        margin-bottom: 8px;
+    }
+
+    /* 2. Deixa o texto da tabela legível no celular sem quebrar linhas bagunçadas */
+    th, td {
+        padding: 10px 8px !important;
+        font-size: 14px;
+        white-space: nowrap; 
+    }
+
+    /* 3. Ajusta o tamanho do Modal (a tela que abre com o erro que corrigimos) */
+    .modal-content {
+        width: 92% !important;  /* Ocupa quase a tela toda do celular */
+        padding: 15px !important;
+        margin: 15% auto;       /* Centraliza melhor na vertical */
+    }
+}
