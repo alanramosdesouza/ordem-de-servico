@@ -1,2 +1,5 @@
 sftp.json
 db_conexao.php
+.env
+__pycache__/
+.env.local

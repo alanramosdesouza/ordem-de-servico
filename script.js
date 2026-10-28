@@ -4,6 +4,7 @@
 
 
 const STORAGE_KEY = 'solicitacoesHotel_v1';
+const PYTHON_API_URL = 'http://127.0.0.1:5002';
 
 // Mapeamento de categorias -> tipos (subopções)
 const CATEGORIES = {
@@ -31,7 +32,7 @@ async function enviarSolicitacao() {
   console.log("O botão foi clicado e a função iniciou!");
   const dados = {
     departamento: categoriaEl.value,
-    tipo: opcaoEl.options[opcaoEl.selectedIndex]?.text || '',
+    tipo: opcaoEl.value.trim(),
     prioridade: prioridadeSelecionada,
     descricao: descricaoEl.value.trim()
   };
@@ -43,7 +44,7 @@ async function enviarSolicitacao() {
   }
 
   try {
-    const response = await fetch('api.php', {
+    const response = await fetch(PYTHON_API_URL + '/api/solicitacoes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(dados)
@@ -67,6 +68,7 @@ async function enviarSolicitacao() {
 // --- DOM refs ---
 const categoriaEl = document.getElementById('categoria');
 const opcaoEl = document.getElementById('opcao');
+const opcoesEl = document.getElementById('opcoes-solicitacao');
 const descricaoEl = document.getElementById('descricao');
 const formEl = document.getElementById('form-solicitacao');
 const mensagemEl = document.getElementById('mensagem');
@@ -89,10 +91,59 @@ const modalClose = document.getElementById('modal-close');
 document.addEventListener('DOMContentLoaded', () => {
   populateCategorySelects();
   attachPriorityButtons();
+  carregarDashboard();
   listarSolicitacoes();
   attachFormListeners();
   attachFilters();
 });
+
+async function carregarDashboard() {
+  const mensagem = document.getElementById('dashboard-mensagem');
+  try {
+    const response = await fetch(PYTHON_API_URL + '/api/dashboard');
+    const dados = await response.json();
+    if (!response.ok) throw new Error(dados.error || 'Erro ao carregar indicadores.');
+    Object.entries(dados.resumo).forEach(([chave, valor]) => {
+      const elemento = document.querySelector('[data-metrica="' + chave + '"]');
+      if (elemento) elemento.textContent = Number(valor).toLocaleString('pt-BR');
+    });
+    renderizarBarras('dashboard-departamentos', dados.departamentos, nomeDashboard);
+    renderizarBarras('dashboard-prioridades', dados.prioridades, nomeDashboard, true);
+    renderizarBarras('dashboard-meses', completarMeses(dados.ultimos_meses), nomeMesDashboard);
+    mensagem.textContent = '';
+  } catch (error) {
+    console.error('Erro ao carregar dashboard:', error);
+    mensagem.textContent = 'Não foi possível carregar os indicadores.';
+    ['dashboard-departamentos', 'dashboard-prioridades', 'dashboard-meses'].forEach(id => {
+      document.getElementById(id).innerHTML = '<p class="dashboard-vazio">Dados indisponíveis.</p>';
+    });
+  }
+}
+
+function renderizarBarras(id, itens, formatarNome, prioridades = false) {
+  const container = document.getElementById(id);
+  if (!itens.length) { container.innerHTML = '<p class="dashboard-vazio">Nenhuma solicitação registrada.</p>'; return; }
+  const maximo = Math.max(...itens.map(item => Number(item.total)), 1);
+  container.innerHTML = itens.map(item => {
+    const percentual = Math.max(Number(item.total) / maximo * 100, item.total ? 3 : 0);
+    const nome = formatarNome(item.nome ?? item.mes);
+    const cor = prioridades ? ' barra-prioridade-' + escapeHtml(item.nome) : '';
+    return '<div class="barra-item' + cor + '"><span class="barra-nome" title="' + escapeHtml(nome) + '">' + escapeHtml(nome) + '</span><span class="barra-trilho"><span class="barra-preenchimento" style="display:block;width:' + percentual + '%"></span></span><span class="barra-valor">' + Number(item.total) + '</span></div>';
+  }).join('');
+}
+
+function nomeDashboard(nome) { return nome ? nome[0].toLocaleUpperCase('pt-BR') + nome.slice(1) : 'Não informado'; }
+function completarMeses(dados) {
+  const porMes = new Map(dados.map(item => [item.mes, Number(item.total)]));
+  const hoje = new Date();
+  return Array.from({ length: 6 }, (_, indice) => {
+    const data = new Date(hoje.getFullYear(), hoje.getMonth() - 5 + indice, 1);
+    const chave = data.getFullYear() + '-' + String(data.getMonth() + 1).padStart(2, '0');
+    return { mes: chave, total: porMes.get(chave) || 0 };
+  });
+}
+
+function nomeMesDashboard(mes) { const [ano, numero] = mes.split('-'); return new Date(Number(ano), Number(numero) - 1, 1).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }); }
 
 // Preenche selects de categoria (form e filtro)
 function populateCategorySelects(){
@@ -115,13 +166,11 @@ categoriaEl.addEventListener('change', () => {
 
 function atualizarOpcoes(){
   const cat = categoriaEl.value;
-  opcaoEl.innerHTML = "<option value=''>-- Primeiro selecione um departamento --</option>";
-  if(!cat || !CATEGORIES[cat]) return;
-  CATEGORIES[cat].forEach(item => {
+  opcoesEl.innerHTML = '';
+  (CATEGORIES[cat] || []).forEach(item => {
     const opt = document.createElement('option');
-    opt.value = slugify(item);
-    opt.textContent = item;
-    opcaoEl.appendChild(opt);
+    opt.value = item;
+    opcoesEl.appendChild(opt);
   });
 }
 
@@ -153,7 +202,7 @@ function resetForm(){
   formEl.reset();
   prioridadeSelecionada = "";
   document.querySelectorAll('.prioridade-option').forEach(b => b.classList.remove('selected'));
-  opcaoEl.innerHTML = "<option value=''>-- Primeiro selecione um departamento --</option>";
+  atualizarOpcoes();
 }
 
 // Mostrar mensagem temporária
@@ -175,11 +224,19 @@ async function listarSolicitacoes() {
     const busca = searchEl.value;
 
     // Monta a URL com os parâmetros de busca (Query String)
-    const url = `api.php?categoria=${cat}&prioridade=${prio}&status=${stat}&busca=${busca}`;
+    const params = new URLSearchParams({
+      categoria: cat,
+      prioridade: prio,
+      status: stat,
+      busca
+    });
+    const url = `${PYTHON_API_URL}/api/solicitacoes?${params}`;
     
     const response = await fetch(url);
     const lista = await response.json();
-    console.log('API lista:', lista);
+    if (!response.ok) {
+      throw new Error(lista.error || 'Erro ao carregar solicitações.');
+    }
    
 
     // 2. Limpa a tabela antes de renderizar
@@ -293,7 +350,7 @@ async function listarSolicitacoes() {
 // Atualiza status e salva
 async function atualizarStatusNoBanco(id, novoStatus) {
   try {
-    const response = await fetch('api.php', {
+    const response = await fetch(PYTHON_API_URL + '/api/solicitacoes', {
       method: 'PUT', // Usamos PUT para atualizações
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, status: novoStatus })
@@ -314,7 +371,7 @@ async function atualizarStatusNoBanco(id, novoStatus) {
 // Excluir
 async function excluirSolicitacao(id) {
   try {
-    const response = await fetch('api.php', {
+    const response = await fetch(PYTHON_API_URL + '/api/solicitacoes', {
       method: 'DELETE', // Usamos DELETE para remover
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id })
@@ -358,9 +415,9 @@ function attachFilters(){
     el.addEventListener('change', listarSolicitacoes);
   });
 
-  exportBtn.addEventListener('click', exportToJson);
-  importFile.addEventListener('change', handleImport);
-  limparTudoBtn.addEventListener('click', () => {
+  if (exportBtn) exportBtn.addEventListener('click', exportToJson);
+  if (importFile) importFile.addEventListener('change', handleImport);
+  if (limparTudoBtn) limparTudoBtn.addEventListener('click', () => {
     if(confirm('Limpar todas as solicitações salvas localmente? Essa ação é irreversível.')) {
       localStorage.removeItem(STORAGE_KEY);
       listarSolicitacoes();
