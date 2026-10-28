@@ -34,7 +34,7 @@ header{ text-align:center; margin-bottom:16px; }
 }
 
 label{display:block; margin-top:8px; font-weight:600;}
-select, textarea, input[type="search"]{
+select, textarea, input[type="search"], input[type="text"]{
   width:100%;
   padding:8px;
   margin-top:6px;
@@ -277,3 +277,15 @@ button{ cursor:pointer; }
         margin: 15% auto;       /* Centraliza melhor na vertical */
     }
 }
+
+/* Dashboard */
+.dashboard{max-width:var(--max-width);margin:0 auto 20px;padding:20px;background:var(--card);border-radius:10px;box-shadow:0 6px 18px rgba(10,10,20,.05)}
+.dashboard-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:16px}
+.dashboard-heading h2{margin:2px 0 0;font-size:22px}.eyebrow{margin:0;color:#2d8cff;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.dashboard-mensagem{margin:0;color:var(--muted);font-size:13px}.metricas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.metrica{display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid #e8ebf2;border-radius:9px;background:#fbfcff}.metrica span{color:var(--muted);font-size:13px}.metrica strong{font-size:28px;line-height:1}
+.metrica-aberta{border-left:4px solid var(--vermelho)}.metrica-andamento{border-left:4px solid var(--amarelo)}.metrica-concluida{border-left:4px solid var(--verde)}
+.dashboard-graficos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}.grafico-card{min-width:0;padding:16px;border:1px solid #e8ebf2;border-radius:9px}.grafico-card h3{margin:0 0 14px;font-size:15px}.grafico-meses{grid-column:1/-1}
+.barras{display:grid;gap:12px}.barra-item{display:grid;grid-template-columns:minmax(84px,120px) 1fr 32px;align-items:center;gap:10px;font-size:13px}.barra-nome{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#444}.barra-trilho{height:10px;overflow:hidden;border-radius:99px;background:#edf0f5}.barra-preenchimento{height:100%;min-width:0;border-radius:inherit;background:#2d8cff;transition:width .25s ease}.barra-prioridade-alta .barra-preenchimento{background:var(--vermelho)}.barra-prioridade-media .barra-preenchimento{background:var(--amarelo)}.barra-prioridade-baixa .barra-preenchimento{background:var(--verde)}.barra-valor{text-align:right;font-weight:700}.dashboard-vazio{margin:0;color:var(--muted);font-size:13px}
+@media(max-width:900px){.metricas{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:768px){.dashboard{padding:14px}.dashboard-heading{align-items:start;flex-direction:column}.dashboard-graficos{grid-template-columns:1fr}.grafico-meses{grid-column:auto}.barra-item{grid-template-columns:minmax(74px,100px) 1fr 28px;gap:7px}}

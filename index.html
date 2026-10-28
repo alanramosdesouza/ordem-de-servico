@@ -4,12 +4,30 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Sistema de Requisições - Hotel (Local)</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=python-crud">
 </head>
 <body>
   <header>
     <h1>Sistema de Requisições Internas</h1>
   </header>
+
+  <section class="dashboard" aria-labelledby="dashboard-titulo">
+    <div class="dashboard-heading">
+      <div><p class="eyebrow">Visão geral</p><h2 id="dashboard-titulo">Dashboard de solicitações</h2></div>
+      <p id="dashboard-mensagem" class="dashboard-mensagem" role="status" aria-live="polite"></p>
+    </div>
+    <div class="metricas">
+      <article class="metrica"><span>Total de solicitações</span><strong data-metrica="total">—</strong></article>
+      <article class="metrica metrica-aberta"><span>Abertas</span><strong data-metrica="abertas">—</strong></article>
+      <article class="metrica metrica-andamento"><span>Em andamento</span><strong data-metrica="em_andamento">—</strong></article>
+      <article class="metrica metrica-concluida"><span>Concluídas</span><strong data-metrica="concluidas">—</strong></article>
+    </div>
+    <div class="dashboard-graficos">
+      <article class="grafico-card"><h3>Solicitações por departamento</h3><div id="dashboard-departamentos" class="barras" aria-live="polite"></div></article>
+      <article class="grafico-card"><h3>Solicitações por prioridade</h3><div id="dashboard-prioridades" class="barras" aria-live="polite"></div></article>
+      <article class="grafico-card grafico-meses"><h3>Solicitações nos últimos 6 meses</h3><div id="dashboard-meses" class="barras barras-meses" aria-live="polite"></div></article>
+    </div>
+  </section>
 
   <main class="container">
     <section class="form-section">
@@ -20,9 +38,8 @@
         </select>
 
         <label for="opcao">Tipo de solicitação:</label>
-        <select id="opcao" required>
-          <option value="">-- Primeiro selecione um departamento --</option>
-        </select>
+        <input id="opcao" type="text" list="opcoes-solicitacao" placeholder="Digite ou escolha um tipo..." maxlength="100" required>
+        <datalist id="opcoes-solicitacao"></datalist>
 
         <label>Prioridade:</label>
         <div class="grupo-de-prioridade" role="radiogroup" aria-label="Prioridade">
@@ -102,6 +119,6 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=python-crud"></script>
 </body>
 </html>
